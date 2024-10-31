@@ -22,9 +22,9 @@ func CreateCommentHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Required fields are missing for comment creation"})
 	}
-	err = Comment.CreateComment(commentParams.TicketId, commentParams.UserId, commentParams.Description);
-	if err != nil{
-		 return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	err = Comment.CreateComment(commentParams.TicketId, commentParams.UserId, commentParams.Description)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"response": "comment added successfully"})
 

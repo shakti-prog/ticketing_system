@@ -3,12 +3,12 @@ package utils
 type Credentials struct {
 	Useremail string `json:"useremail"`
 	Password  string `json:"password"`
-	Username string  `json:"username"`
+	Username  string `json:"username"`
 }
 
 type ProjectParams struct {
 	ProjectName string `json:"project_name"`
-	Created_By   int64  `json:"created_by"`
+	Created_By  int64  `json:"created_by"`
 }
 
 type TicketParams struct {
@@ -22,6 +22,11 @@ type TicketParams struct {
 
 type CommentParams struct {
 	TicketId    int64  `json:"ticketId"`
-	Description string `json:"Description"`
-	UserId int64 `json:"userId"`
+	Description string `json:"description"`
+	UserId      int64  `json:"userId"`
+}
+
+type UpdateTicketParams struct {
+	Field string `json:"field"`
+	Value string `json:"value"`
 }

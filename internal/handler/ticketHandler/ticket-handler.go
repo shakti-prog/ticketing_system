@@ -1,7 +1,7 @@
 package tickethandler
 
 import (
-	"fmt"
+	"strconv"
 	"ticketing_system_backend/internal/repository/ticket"
 	"ticketing_system_backend/pkg/utils"
 
@@ -30,13 +30,18 @@ func CreateTicketHandler(c *fiber.Ctx) error {
 }
 
 func UpdateTicketHandler(c *fiber.Ctx) error {
-	var ticketId string = c.Params("ticketId")
-	var field string = c.Params("field")
-	var value string = c.Params("value")
-	if ticketId == "" {
+	var ticket_no, err = strconv.Atoi(c.Params("ticketId"))
+	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ticket Id"})
 	}
-	fmt.Println(field)
-	fmt.Println(value)
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"response": "Ticket is present"})
+	var udpateTicketParams utils.UpdateTicketParams
+	err = c.BodyParser(&udpateTicketParams)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Body params"})
+	}
+	err = ticket.UpdateTicket(udpateTicketParams.Field, udpateTicketParams.Value, int64(ticket_no))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"response": "Ticket Updated successfully"})
 }
