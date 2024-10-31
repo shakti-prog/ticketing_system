@@ -8,7 +8,6 @@ import (
 )
 
 func GetCommentHandler(c *fiber.Ctx) error {
-
 	var commentId string = c.Params("ticketId")
 	if commentId == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid comment Id"})
