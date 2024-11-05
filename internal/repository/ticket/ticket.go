@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"ticketing_system_backend/internal/database"
+	"ticketing_system_backend/pkg/utils"
 )
 
 func CreateTicket(assigneeId int64, reporterId int64, projectId int64, description string, status string, priority string) error {
@@ -55,4 +56,53 @@ func UpdateTicket(field string, value string, ticketNo int64) error {
 	}
 
 	return nil
+}
+
+func GetSpecificTicket(ticketId int64) (map[string]interface{}, error) {
+	dbpool := database.ConnectDB()
+	conn, connectionErr := dbpool.Acquire(context.Background())
+	data := make(map[string]interface{})
+	if connectionErr != nil {
+		return data, connectionErr
+	}
+
+	defer conn.Release()
+
+	var ticketNo int64
+	var description string
+	var status string
+	var priority string
+	var comments []utils.CommentParams
+
+	query := `SELECT 
+ 
+    t.ticket_no, 
+    t.description, 
+    t.status, 
+    t.priority, 
+    ARRAY_AGG(JSONB_BUILD_OBJECT(
+        'description', c.description, 
+        'userId', c.user_id 
+    )) AS all_comments
+FROM 
+    tickets AS t
+LEFT JOIN 
+    comments AS c ON t.id = c.ticket_id
+WHERE 
+    t.id = $1
+GROUP BY 
+    t.id, t.ticket_no, t.description, t.status, t.priority;
+    `
+	queryError := dbpool.QueryRow(context.Background(), query, ticketId).Scan(&ticketNo, &description, &status, &priority, &comments)
+	if queryError != nil {
+		return data, queryError
+	}
+	fmt.Println(comments);
+	data["ticket_no"] = ticketNo
+	data["description"] = description
+	data["status"] = status
+	data["priority"] = priority
+	data["comments"] = comments
+	return data, nil
+
 }

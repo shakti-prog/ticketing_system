@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetTicketHandler(c *fiber.Ctx) error {
+func GetTicketsHandler(c *fiber.Ctx) error {
 	var ticketId string = c.Params("projectId")
 	if ticketId == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid project Id"})
@@ -44,4 +44,16 @@ func UpdateTicketHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"response": "Ticket Updated successfully"})
+}
+
+func GetSpecificTicketHandler(c *fiber.Ctx) error {
+	var ticketId, err = strconv.Atoi(c.Params("ticketId"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ticket Id"})
+	}
+	ticketDetails, err := ticket.GetSpecificTicket((int64(ticketId)))
+	if err != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"response": ticketDetails})
 }

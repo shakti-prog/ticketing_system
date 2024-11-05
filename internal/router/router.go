@@ -21,7 +21,9 @@ func Router(app *fiber.App) {
 
 	app.Post("/project", middleware.JwtMiddleWare, projecthandler.CreateProjectHandler)
 
-	app.Get("/ticket/:projectId", middleware.JwtMiddleWare, tickethandler.GetTicketHandler)
+	app.Get("/tickets/:projectId", middleware.JwtMiddleWare, tickethandler.GetTicketsHandler)
+
+	app.Get("/ticket/:ticketId", middleware.JwtMiddleWare, tickethandler.GetSpecificTicketHandler)
 
 	app.Post("/ticket", middleware.JwtMiddleWare, tickethandler.CreateTicketHandler)
 
